@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validasi Input Teks</title>
+</head>
+<body>
+    <form id="myForm">
+        <label for="textInput">Masukkan Teks:</label>
+        <input type="text" id="textInput" required>
+        <button type="submit">Kirim</button>
+    </form>
+    <p id="message" style="color: red;"></p>
+
+    <script>
+        const form = document.getElementById('myForm');
+        const textInput = document.getElementById('textInput');
+        const message = document.getElementById('message');
+
+        form.addEventListener('submit', function(event) {
+            message.textContent = ''; // Menghapus pesan sebelumnya
+            const inputValue = textInput.value.trim(); // Menghapus spasi di awal dan akhir
+
+            if (inputValue === '') {
+                message.textContent = 'Input tidak boleh kosong!';
+                event.preventDefault(); // Mencegah form dikirim
+            } else if (inputValue.length < 5) {
+                message.textContent = 'Input harus terdiri dari minimal 5 karakter!';
+                event.preventDefault(); // Mencegah form dikirim
+            }
+        });
+    </script>
+</body>
+</html>

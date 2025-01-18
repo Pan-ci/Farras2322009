@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR Code</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+</head>
+<body>
+
+<video id="video" width="300" height="300" autoplay></video>
+<canvas id="canvas" width="300" height="300" style="display:none;"></canvas>
+<p id="result"></p>
+
+<script>
+    const videoElement = document.getElementById('video');
+    const canvasElement = document.getElementById('canvas');
+    const resultElement = document.getElementById('result');
+    const canvasContext = canvasElement.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then((stream) => {
+        videoElement.srcObject = stream;
+        videoElement.setAttribute('playsinline', true); // Required for iOS
+        videoElement.play();
+
+        requestAnimationFrame(scanQRCode);
+    })
+    .catch((err) => {
+        console.error('Error accessing camera: ', err);
+    });
+
+    function scanQRCode() {
+        if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+            canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            const code = jsQR(imageData.data, canvasElement.width, canvasElement.height);
+
+            if (code) {
+                resultElement.textContent = `QR Code Result: ${code.data}`;
+            } else {
+                resultElement.textContent = 'Scanning for QR code...';
+            }
+        }
+
+        requestAnimationFrame(scanQRCode);
+    }
+</script>
+
+</body>
+</html>
